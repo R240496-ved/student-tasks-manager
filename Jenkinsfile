@@ -10,7 +10,7 @@ pipeline {
         BACKEND_IMAGE = 'student-task-manager-backend'
         FRONTEND_IMAGE = 'student-task-manager-frontend'
     }
-
+    // CI/CD flow: Checkout → Build → Test → Docker Build → Docker Deployment
     stages {
         stage('Checkout') {
             steps {
