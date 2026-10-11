@@ -1,3 +1,4 @@
+
 pipeline {
     agent any
 
@@ -5,12 +6,20 @@ pipeline {
         skipDefaultCheckout(true)
     }
 
+    parameters {
+        string(
+            name: 'EC2_HOST',
+            defaultValue: '13.126.17.162',
+            description: 'Public IPv4 address of the AWS EC2 instance'
+        )
+    }
+
     environment {
         COMPOSE_PROJECT_NAME = 'student-task-manager'
         BACKEND_IMAGE = 'student-task-manager-backend'
         FRONTEND_IMAGE = 'student-task-manager-frontend'
     }
-    // CI/CD flow: Checkout → Build → Test → Docker Build → Docker Deployment
+
     stages {
         stage('Checkout') {
             steps {
@@ -20,8 +29,6 @@ pipeline {
 
         stage('Build') {
             steps {
-                // Use the Jenkins home volume so the Python container can access
-                // the workspace without relying on a host-only bind-mount path.
                 sh '''
                     docker run --rm \
                         --user "$(id -u):$(id -g)" \
@@ -56,11 +63,23 @@ pipeline {
             }
         }
 
-        stage('Docker Deployment') {
+        stage('Deploy to EC2') {
             steps {
-                sh '''
-                    docker compose -f docker-compose.yml -p "$COMPOSE_PROJECT_NAME" up -d --no-build
-                '''
+                withCredentials([sshUserPrivateKey(
+                    credentialsId: 'ec2-deploy-key',
+                    keyFileVariable: 'EC2_KEY',
+                    usernameVariable: 'EC2_USER'
+                )]) {
+                    sh '''
+                        set -eu
+
+                        ssh -i "$EC2_KEY" \
+                            -o StrictHostKeyChecking=accept-new \
+                            -o ConnectTimeout=15 \
+                            "$EC2_USER@$EC2_HOST" \
+                            'cd ~/student-tasks-manager && git pull --ff-only origin main && docker compose up -d --build && docker compose ps'
+                    '''
+                }
             }
         }
     }
