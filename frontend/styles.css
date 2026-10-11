@@ -130,3 +130,15 @@ footer { padding: 23px 0 0; color: #a2a9b7; text-align: center; font-size: 11px;
   .form-panel, .tasks-panel { padding: 20px 17px 16px; }
   .task-card { padding: 14px; }
 }
+.version-tag {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 5px 9px;
+  border-radius: 6px;
+  background: #e7eaff;
+  color: #4f5bd5;
+  font-size: 12px;
+  font-weight: 700;
+  vertical-align: middle;
+  letter-spacing: 0.4px;
+}
