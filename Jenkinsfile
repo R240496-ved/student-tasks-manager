@@ -79,6 +79,7 @@ pipeline {
                             "$EC2_USER@$EC2_HOST" \
                             'cd ~/student-tasks-manager && git pull --ff-only origin main && docker compose up -d --build && docker compose ps'
                     '''
+                    //trying to set continuoues CI/CD
                 }
             }
         }
