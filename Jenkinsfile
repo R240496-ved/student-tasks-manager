@@ -9,7 +9,7 @@ pipeline {
     parameters {
         string(
             name: 'EC2_HOST',
-            defaultValue: '13.126.17.162',
+            defaultValue: '13.207.10.176',
             description: 'Public IPv4 address of the AWS EC2 instance'
         )
     }
@@ -18,6 +18,7 @@ pipeline {
         COMPOSE_PROJECT_NAME = 'student-task-manager'
         BACKEND_IMAGE = 'student-task-manager-backend'
         FRONTEND_IMAGE = 'student-task-manager-frontend'
+        EC2_HOST = "${params.EC2_HOST}"
     }
 
     stages {
